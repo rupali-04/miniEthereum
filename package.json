@@ -2,9 +2,9 @@
   "name": "minisolidity",
   "version": "1.0.0",
   "description": "It is mimic of Ethereum blockchain",
-  "main": "app.js",
+  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --watchAll"
   },
   "repository": {
     "type": "git",
@@ -18,7 +18,11 @@
   "author": "Rupali Shah",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/rupali-04/miniSolidity/issues"
+    "url": "https://github.com/rupali-04/miniEthereum/issues"
   },
-  "homepage": "https://github.com/rupali-04/miniSolidity#readme"
+  "homepage": "https://github.com/rupali-04/miniEthereum#readme",
+  "dependencies": {
+    "jest": "^27.1.1",
+    "js-sha3": "^0.8.0"
+  }
 }
