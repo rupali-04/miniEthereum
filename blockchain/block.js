@@ -1,10 +1,15 @@
 const {GENESIS_DATA} = require('../config');
+
+const HASH_LENGTH =64;
+
 class Block {
     constructor({blockHeaders}){
         this.bockHeaders = blockHeaders;
     }
+    static calculateBlockTargetHash({lastBlock}){
 
-    static mineBlock({lastBlock}){
+    }
+    static mineBlock({lastBlock,beneficiary}){
         
     }
 
