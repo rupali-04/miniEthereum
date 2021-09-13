@@ -2,11 +2,11 @@ const GENESIS_DATA = {
     blockHeaders: {
         parentHash: '--Genesis-Parent-Hash--',
         beneficiary: '--Genesis-Beneficiary--',
-        difficulty: 1,
+        difficulty: 100000,
         number: 0,
         timestamp: '--Genesis-Timestamp--',
         nounce: 0
     }
 };
-
-module.exports = { GENESIS_DATA };
+const MINE_RATE = 13 * (1000 * 1); 
+module.exports = { GENESIS_DATA,MINE_RATE };

@@ -1,5 +1,5 @@
 const { keccakHash } = require('../util');
-const {GENESIS_DATA} = require('../config');
+const {GENESIS_DATA,MINE_RATE} = require('../config');
 
 const HASH_LENGTH =64;
 const MAX_LENGTH_VALUE = parseInt('f'.repeat(HASH_LENGTH),16);
@@ -16,6 +16,20 @@ class Block {
         }
         return '0'.repeat(HASH_LENGTH - value.length) + value;
     }
+
+    static adjustDifficulty({lastBlock,timestamp}) {
+        const {difficulty} = lastBlock.blockHeaders;
+        if((timestamp - lastBlock.blockHeaders.timestamp) > MINE_RATE){
+            return difficulty - 1;
+        }
+
+        if(difficulty < 1){
+            return 1;
+        }
+
+        return difficulty + 1;
+    }
+
     static mineBlock({lastBlock,beneficiary}){
         const target = Block.calculateBlockTargetHash({lastBlock});
         let timestamp,turncatedBlockHeaders, header, nonce,underTargetHash;
@@ -26,7 +40,7 @@ class Block {
                 parentHash: keccakHash(lastBlock.blockHeaders),
                 timestamp,
                 beneficiary,
-                difficulty: lastBlock.blockHeaders.difficulty + 1,
+                difficulty: Block.adjustDifficulty({lastBlock,timestamp}),
                 number: lastBlock.blockHeaders.number + 1
             };
             header = keccakHash(turncatedBlockHeaders);
