@@ -47,6 +47,6 @@ class Block {
 
 module.exports = Block;
 
-const b = Block.mineBlock({lastBlock: Block.genesis(),beneficiary: "demo"});
+// const b = Block.mineBlock({lastBlock: Block.genesis(),beneficiary: "demo"});
 
-console.log(b);
+// console.log(b);
