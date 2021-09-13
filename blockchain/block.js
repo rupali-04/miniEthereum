@@ -29,9 +29,9 @@ class Block {
                 difficulty: lastBlock.blockHeaders.difficulty + 1,
                 number: lastBlock.blockHeaders.number + 1
             };
-        header = keccakHash(turncatedBlockHeaders);
-        nonce = Math.floor(Math.random() * MAX_NOUNCE_VALUE);
-        underTargetHash = keccakHash(header + nonce);
+            header = keccakHash(turncatedBlockHeaders);
+            nonce = Math.floor(Math.random() * MAX_NOUNCE_VALUE);
+            underTargetHash = keccakHash(header + nonce);
         }while(underTargetHash > target);
 
         
