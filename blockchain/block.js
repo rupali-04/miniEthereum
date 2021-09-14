@@ -57,6 +57,49 @@ class Block {
         // this keyword is same as class name;
         return new Block(GENESIS_DATA);
     }
+
+    static validateBlock({lastBlock,block}){
+        return new Promise((resolve,reject)=>{
+            // Genesis Block Case:
+            if(keccakHash(block) === keccakHash(Block.genesis())){
+                return resolve();
+            }
+            if(keccakHash(lastBlock.blockHeaders) !== block.blockHeaders.parentHash){
+                return reject(new Error(`ParentHash of Block must be equal to lastBlock Hash!!`));
+            }
+            if(lastBlock.blockHeaders.number !== (block.blockHeaders.number - 1)){
+                return reject(new Error(`Number must increment be one!!`));
+            }
+            // if(lastBlock.blockHeaders.timestamp > MINE_RATE){
+            //     if((lastBlock.blockHeaders.difficulty - 1) !== block.blockHeaders.difficulty){
+            //         return reject(new Error(`Difficulty must be decrement by 1!!`))
+            //     }
+            // }
+            
+            // if(lastBlock.blockHeaders.timestamp <= MINE_RATE){
+            //     if((lastBlock.blockHeaders.difficulty + 1) !== block.blockHeaders.difficulty){
+            //         return reject(new Error(`Difficulty must be Increment by 1!!`))
+            //     }
+            // }
+
+            if(Math.abs(lastBlock.blockHeaders.difficulty - block.blockHeaders.difficulty) > 1){
+                return reject(new Error(`Difficulty must be adjust by 1!!`));
+            }
+
+            const target = Block.calculateBlockTargetHash({lastBlock});
+            const {blockHeaders} = block;
+            const {nonce} = blockHeaders;
+            const tBlock = {...blockHeaders};
+            delete tBlock.nonce;
+            const header = keccakHash(tBlock);
+            const underTargetHash = keccakHash(header+nonce);
+            if(underTargetHash > target) {
+                return reject(new Error(`Invalid Hash!!`));
+            }
+
+            return resolve();
+        });
+    }
 }
 
 module.exports = Block;

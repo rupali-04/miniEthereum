@@ -53,4 +53,43 @@ describe('Block',()=>{
             })).toEqual(4);
         });
     });
+
+    describe('validateBlock()',()=>{
+        let block,lastBlock;
+
+        beforeEach(()=>{
+            lastBlock = Block.genesis();
+            block = Block.mineBlock({lastBlock,beneficiary: 'demo'});
+        });
+        it('When the Block is genesis Block it must be resolve',()=>{
+            expect(Block.validateBlock({block: Block.genesis()})).resolves;
+        });
+        it('When the block is valid it must resolve!',()=>{
+            expect(Block.validateBlock({lastBlock,block})).resolves;
+        });
+
+        it('When parentHash is Invalid Reject the block',()=>{
+            block.blockHeaders.parentHash = 'wrong';
+
+            expect(Block.validateBlock({lastBlock,block})).rejects.toMatchObject({message: `ParentHash of Block must be equal to lastBlock Hash!!`});
+        });
+        it('When number is not increased by 1 Reject the block',()=>{
+            block.blockHeaders.number = lastBlock.blockHeaders.number + 3;
+
+            expect(Block.validateBlock({lastBlock,block})).rejects.toMatchObject({message: `Number must increment be one!!`});
+        });
+        it('When difficulty is not adjust by 1 Reject the block',()=>{
+            block.blockHeaders.difficulty = lastBlock.blockHeaders.difficulty + 3;
+
+            expect(Block.validateBlock({lastBlock,block})).rejects.toMatchObject({message: `Difficulty must be adjust by 1!!`});
+        });
+        it('When Proof of work requirement is not met Promise is Rejected!!',()=>{
+            const originalMethod = Block.calculateBlockTargetHash;
+            Block.calculateBlockTargetHash = () => {
+                return '0'.repeat(64);
+            }
+            expect(Block.validateBlock({lastBlock,block})).rejects.toMatchObject({message: 'Invalid Hash!!'});
+            Block.calculateBlockTargetHash = originalMethod;
+        });
+    })
 })
