@@ -2,7 +2,7 @@ const GENESIS_DATA = {
     blockHeaders: {
         parentHash: '--Genesis-Parent-Hash--',
         beneficiary: '--Genesis-Beneficiary--',
-        difficulty: 100000,
+        difficulty: 10,
         number: 0,
         timestamp: '--Genesis-Timestamp--',
         nounce: 0
