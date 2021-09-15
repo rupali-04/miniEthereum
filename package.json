@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/rupali-04/miniEthereum#readme",
   "dependencies": {
+    "elliptic": "^6.5.4",
     "express": "^4.17.1",
     "jest": "^27.1.1",
     "js-sha3": "^0.8.0",
