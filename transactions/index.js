@@ -36,14 +36,31 @@ class Transaction {
             const transactionData = {...transaction};
             delete transactionData.signature;
 
-            if(!Account.verifySignature({
-                publicKey: from,
-                data: transactionData,
-                signature })){
-                    return reject(new Error(``))
-                }
+            if(!Account.verifySignature({publicKey: from,data: transactionData,signature }))
+            {
+                    return reject(new Error(`Transaction ${id} signature is invalid!!`));
             }
-        )
+                return resolve();
+
+            });
+    }
+    static validateCreateAccountTransaction({transaction}){
+        return new Promise((resolve,reject) => {
+            const expectedAccountDataFields = Object.keys(new Account().toJSON());
+            const fields = Object.keys(transation.data.accountData) ;
+            
+            if(fields.length !== expectedAccountDataFields.length){
+                return reject(
+                    new Error(`The transation account data has an incorrect number of fields`)
+                );
+            }
+            fields.forEach(field =>{
+               if(!expectedAccountDataFields.includes(field)){
+                   return reject(new Error(`The field: ${field}, is unexpected for account data`))
+               } 
+            });
+            return resolve();
+        });
     }
 }
 
