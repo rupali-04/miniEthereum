@@ -47,16 +47,16 @@ class Transaction {
     static validateCreateAccountTransaction({transaction}){
         return new Promise((resolve,reject) => {
             const expectedAccountDataFields = Object.keys(new Account().toJSON());
-            const fields = Object.keys(transation.data.accountData) ;
+            const fields = Object.keys(transaction.data.accountData) ;
             
             if(fields.length !== expectedAccountDataFields.length){
                 return reject(
-                    new Error(`The transation account data has an incorrect number of fields`)
+                    new Error('The transaction account data has an incorrect number of fields')
                 );
             }
             fields.forEach(field =>{
                if(!expectedAccountDataFields.includes(field)){
-                   return reject(new Error(`The field: ${field}, is unexpected for account data`))
+                   return reject(new Error(`The field: ${field}, is incorrect for account data`))
                } 
             });
             return resolve();
