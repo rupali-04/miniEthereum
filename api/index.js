@@ -1,12 +1,24 @@
 const express = require('express');
 const request = require('request');
+const Account = require('../account');
 const Blockchain = require('../blockchain');
 const Block = require('../blockchain/block');
 const PubSub = require('./pubsub');
+const TransactionQueue = require('../transactions/transaction-queue')
+
 
 const app = express();
 const blockchain = new Blockchain();
+const transactionQueue = new TransactionQueue();
 const pubsub = new PubSub({blockchain});
+const Transaction = require('../transactions')
+const account = new Account();
+const transaction = Transaction.createTransaction({account});
+
+transactionQueue.add(transaction);
+
+//console.log('Get function Transaction:',transactionQueue.getTransactionPool()); -> returns all the transaction (debug)
+
 
 app.get('/blockchain',(req,res,next) => {
     const {chain} = blockchain;
@@ -15,7 +27,7 @@ app.get('/blockchain',(req,res,next) => {
 
 app.get('/blockchain/mine',(req,res,next)=>{
     const lastBlock = blockchain.chain[blockchain.chain.length -1];
-    const block = Block.mineBlock({lastBlock});
+    const block = Block.mineBlock({lastBlock,beneficiary: account.address});
    // block.blockHeaders.parentHash = 'demo';
     blockchain.addBlock({block}).then(()=>{
         pubsub.broadcastBlock(block);

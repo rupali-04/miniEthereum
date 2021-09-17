@@ -4,11 +4,15 @@
 
 class TransactionQueue{
     constructor(){
-        this.transactionMap = {}
+        this.transactionMap = {};
     }
 
     add(transaction){
         this.transactionMap[transaction.id] = transaction;
+    }
+
+    getTransactionPool(){
+       return Object.values(this.transactionMap)
     }
 }
 
