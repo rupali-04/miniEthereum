@@ -1,6 +1,6 @@
 # miniEthereum
-It is Mini Ethereum Blockchain. 
+It is a Mini Ethereum Blockchain which have used the concepts of Ethereum and solidity. 
 
-This Project is Implemented based on Ethereum Blockchain, Concepts of that Blockchain is been used in this Project. No rights is being claim for this Project.
+It has the basic feature of a Blockchain like decentralised Network, Transactions, Account, cryptography security and much more. It is still not completed and work is in progress so with time more features could be added into it.
 
 MiniEthereum is Initialized only for Learning Purpose.
