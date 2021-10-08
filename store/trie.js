@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const {keccakHash} = require('../util');
 
 class Node{
@@ -32,7 +33,7 @@ class Trie{
                 return 
             }
         }
-        return node.value;
+        return _.cloneDeep(node.value);
     }
 
     // put method to store value with it's key
