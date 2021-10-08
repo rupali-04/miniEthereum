@@ -5,8 +5,10 @@ const GENESIS_DATA = {
         difficulty: 10,
         number: 0,
         timestamp: '--Genesis-Timestamp--',
-        nounce: 0
-    }
+        nounce: 0,
+        transactionRoot: '--Genesis-Transaction-Root--'
+    },
+    transactionSeries: []
 };
 const STARTING_BALANCE = 1000;
 const MINE_RATE = 13 * (1000 * 1); 

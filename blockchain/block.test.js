@@ -15,7 +15,7 @@ describe('Block',()=>{
 
         beforeEach(()=>{
             lastBlock = Block.genesis();
-            minedBlock = Block.mineBlock({lastBlock,beneficiary: 'demo'});
+            minedBlock = Block.mineBlock({lastBlock,beneficiary: 'demo',transactionSeries: []});
         });
 
         it('it mines a Block',()=>{
@@ -59,7 +59,7 @@ describe('Block',()=>{
 
         beforeEach(()=>{
             lastBlock = Block.genesis();
-            block = Block.mineBlock({lastBlock,beneficiary: 'demo'});
+            block = Block.mineBlock({lastBlock,beneficiary: 'demo',transactionSeries: []});
         });
         it('When the Block is genesis Block it must be resolve',()=>{
             expect(Block.validateBlock({block: Block.genesis()})).resolves;

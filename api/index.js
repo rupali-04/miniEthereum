@@ -8,14 +8,20 @@ const TransactionQueue = require('../transactions/transaction-queue')
 
 
 const app = express();
+app.use(express.json())
 const blockchain = new Blockchain();
 const transactionQueue = new TransactionQueue();
-const pubsub = new PubSub({blockchain});
+const pubsub = new PubSub({blockchain,transactionQueue});
 const Transaction = require('../transactions')
 const account = new Account();
 const transaction = Transaction.createTransaction({account});
 
-transactionQueue.add(transaction);
+//Broadcast the entire Transactions
+setTimeout(()=>{
+    pubsub.broadcastTransaction(transaction);
+},500)
+
+//transactionQueue.add(transaction);
 
 //console.log('Get function Transaction:',transactionQueue.getTransactionPool()); -> returns all the transaction (debug)
 
@@ -27,13 +33,25 @@ app.get('/blockchain',(req,res,next) => {
 
 app.get('/blockchain/mine',(req,res,next)=>{
     const lastBlock = blockchain.chain[blockchain.chain.length -1];
-    const block = Block.mineBlock({lastBlock,beneficiary: account.address});
+    const block = Block.mineBlock({lastBlock,beneficiary: account.address,transactionSeries: transactionQueue.getTransactionPool()});
    // block.blockHeaders.parentHash = 'demo';
-    blockchain.addBlock({block}).then(()=>{
+    blockchain.addBlock({block,transactionQueue}).then(()=>{
         pubsub.broadcastBlock(block);
         return res.json({block});
     }).catch(err => next(err));
 });
+
+//  Post a transact 
+app.post('/account/transact',(req,res,next)=>{
+    const {to,value} =req.body;
+
+    const transaction = Transaction.createTransaction({account: !to ? new Account():account,to,value});
+
+    //transactionQueue.add(transaction);
+    pubsub.broadcastTransaction(transaction);
+
+    res.json({transaction});
+})
 
 // Error Handling middleLayer
 app.use((err,req,res,next) => {

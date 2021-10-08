@@ -1,5 +1,5 @@
 const PubNub = require('pubnub');
-
+const Transaction = require('../transactions')
 const credentials = {
     publishKey: 'pub-c-60ca14b5-697b-4a70-8a36-e7e2e2c3b2bb',
     subscribeKey: 'sub-c-5b2bdb5a-1586-11ec-abb2-e20c06117408',
@@ -8,13 +8,15 @@ const credentials = {
 
 const CHANNELS_MAP = {
     TEST: 'TEST',
-    BLOCK: 'BLOCK'
+    BLOCK: 'BLOCK',
+    TANSACTION: 'TANSACTION'
 }
 
 class PubSub {
-    constructor({blockchain}){
+    constructor({blockchain,transactionQueue}){
         this.pubnub = new PubNub(credentials);
         this.blockchain = blockchain;
+        this.transactionQueue = transactionQueue;
         this.subscribeToChannels();
         this.listen();
     }
@@ -40,9 +42,13 @@ class PubSub {
                 switch(channel) {
                     case CHANNELS_MAP.BLOCK: 
                         console.log('Block Message:',message);
-                        this.blockchain.addBlock({block: parseMsg}).then(()=>{
+                        this.blockchain.addBlock({block: parseMsg,transactionQueue: this.transactionQueue}).then(()=>{
                             console.log(`New Block is Accepted!!`);
                         }).catch(err => console.error(`New Block Rejected: ${err.message}`));
+                    break;
+                    case CHANNELS_MAP.TANSACTION:
+                        console.log(`Recived transaction: ${parseMsg.id}`);    
+                        this.transactionQueue.add(new Transaction(parseMsg));
                     break;
                     default: 
                         return;
@@ -58,7 +64,12 @@ class PubSub {
             message: JSON.stringify(block)
         });
     }
-
+    broadcastTransaction(transaction){
+        this.publish({
+            channel: CHANNELS_MAP.TANSACTION,
+            message: JSON.stringify(transaction)
+        })
+    }
 }
 
 

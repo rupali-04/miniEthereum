@@ -6,8 +6,9 @@ const MAX_LENGTH_VALUE = parseInt('f'.repeat(HASH_LENGTH),16);
 const MAX_NOUNCE_VALUE = 2 ** 64;
 
 class Block {
-    constructor({blockHeaders}){
+    constructor({blockHeaders, transactionSeries}){
         this.blockHeaders = blockHeaders;
+        this.transactionSeries = transactionSeries;
     }
     static calculateBlockTargetHash({lastBlock}){
         const value = (MAX_LENGTH_VALUE / lastBlock.blockHeaders.difficulty).toString(16);
@@ -30,7 +31,7 @@ class Block {
         return difficulty + 1;
     }
 
-    static mineBlock({lastBlock,beneficiary}){
+    static mineBlock({lastBlock,beneficiary,transactionSeries}){
         const target = Block.calculateBlockTargetHash({lastBlock});
         let timestamp,turncatedBlockHeaders, header, nonce,underTargetHash;
         do{
@@ -41,7 +42,8 @@ class Block {
                 timestamp,
                 beneficiary,
                 difficulty: Block.adjustDifficulty({lastBlock,timestamp}),
-                number: lastBlock.blockHeaders.number + 1
+                number: lastBlock.blockHeaders.number + 1,
+                transactionRoot: keccakHash(transactionSeries)
             };
             header = keccakHash(turncatedBlockHeaders);
             nonce = Math.floor(Math.random() * MAX_NOUNCE_VALUE);
@@ -49,7 +51,10 @@ class Block {
         }while(underTargetHash > target);
 
         
-            return new Block({blockHeaders: {...turncatedBlockHeaders,nonce}});
+            return new Block({blockHeaders: {...turncatedBlockHeaders,nonce},
+                            transactionSeries
+            });
+
         
     }
 
