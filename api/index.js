@@ -12,7 +12,7 @@ const app = express();
 app.use(express.json());
 
 const state = new State();
-const blockchain = new Blockchain();
+const blockchain = new Blockchain({state});
 const transactionQueue = new TransactionQueue();
 const pubsub = new PubSub({blockchain,transactionQueue});
 const Transaction = require('../transactions')
@@ -56,6 +56,13 @@ app.post('/account/transact',(req,res,next)=>{
     res.json({transaction});
 })
 
+
+//Balance 
+app.get('/account/balance',(req,res,next)=>{
+    const {address} = req.query;
+    const balance = Account.calculateBalance({address:address||account.address,state});
+    res.json({balance});
+})
 // Error Handling middleLayer
 app.use((err,req,res,next) => {
     console.error('Internal Server Error!!');

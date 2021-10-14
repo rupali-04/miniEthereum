@@ -62,6 +62,38 @@ class Transaction {
             return resolve();
         });
     }
+    static runTransaction({transaction,state}){
+        switch(transaction.data.type){
+            case TRANSACTION_TYPE_MAP.TRANSACT:
+                Transaction.runStandardTransaction({state,transaction});
+                console.log('--Updated account Data for Standard Transaction!!--');
+                break;
+            case TRANSACTION_TYPE_MAP.CREATE_ACCOUNT:
+                Transaction.runCreateAccountTransaction({state,transaction});
+                console.log('--Store Account Data!!--');
+                break;
+            default:
+                break;
+        }
+    }
+    static runStandardTransaction({state,transaction}){
+        const fromAccount = state.getAccount({address: transaction.from});
+        const toAccount = state.getAccount({address: transaction.to});
+
+        const {value} = transaction;
+        fromAccount.balance -= value;
+        toAccount.balance +=value;
+
+        state.putAccount({address: transaction.from,accountData: fromAccount});
+        state.putAccount({address: transaction.to,accountData: toAccount});
+    }
+
+    static runCreateAccountTransaction({state,transaction}){
+        const {accountData} = transaction.Data;
+        const {address} = accountData;
+
+        state.putAccount({address,accountData});
+    }
 }
 
 module.exports = Transaction;
